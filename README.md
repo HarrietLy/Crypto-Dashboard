@@ -20,4 +20,4 @@ Improvement if there is time:
 
 
 Others: 
-1. Use Chart Components and NavBar components
+1. Use a Chart library to draw historical price
