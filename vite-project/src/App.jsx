@@ -1,54 +1,56 @@
 import { useState, useEffect } from 'react'
 import './App.css'
-import DataTable from './Components/DataTable/DataTable'
+// import "bootstrap/dist/css/bootstrap.min.css";
+import "purecss/build/pure.css"
+import DataTableWFilter from './Components/DataTable/DataTableWFilter'
+import SearchBar from './Components/SearchBar'
+import NavBar from './Components/NavBar'
+import Footer from './Components/Footer'
+import { Route, Routes,useNavigate } from 'react-router-dom'
+import About from "./Components/About"
+import Coin from './Components/Coin'
+import BaseCurrency from './Components/BaseCurrency'
 
 function App() {
 
   const [rawData, setRawData] = useState([])
+  const [baseMoney, setBaseMoney] =useState('usd')
+ 
 
-  const getTrendingCurr = () => {
-
-    fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=true&price_change_percentage=24h%2C7d%2C30d')
+  const getAPIdata = (baseMoney,items_per_page,page) => {
+    fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=${baseMoney}&order=market_cap_desc&per_page=${items_per_page}&page=${page}&sparkline=true&price_change_percentage=24h%2C7d%2C30d`)
       .then((response) => response.json())
       .then((json) => {
-        const newData = json
-        setRawData(newData)
+        setRawData(json)
       })
   }
 
   useEffect(() => {
-    getTrendingCurr()
-  }, [])
+    getAPIdata(baseMoney,100,1)
+  }, [baseMoney])
+
+  const handleSelect=(e)=>{
+    setBaseMoney(e.target.value)
+    //everytime how to hange URL?
+  }
 
   return (
     <div className="App">
-      
-      <h1>What is up in Crypto Space?</h1>
-      
-      <div>
-        <input placeholder='search token'></input>
-      </div>
+      <NavBar baseMoney={baseMoney} /><br/>
+      <BaseCurrency handleSelect={handleSelect}/><br/><br/>
+      <SearchBar rawData={rawData} baseMoney={baseMoney} />
 
-      <div>
-      <h3>Navigation Bar</h3>
-      </div>
+      <Routes>
+        <Route path='/' >
+          <Route index element={<DataTableWFilter rawData={rawData} baseMoney ={baseMoney}/>}/>
+          <Route path='about' element={<About />} />
+          <Route path=":baseMoney"element={<DataTableWFilter rawData={rawData} baseMoney ={baseMoney}/>} />
+          <Route path=':baseMoney/coins/:coinID' element={<Coin baseMoney ={baseMoney}/> } />
+        </Route>
+      </Routes>
 
-
-
-      <div>
-      <h3>Crypto Currency Ranking by Market Cap</h3>
-      <div>
-      <input placeholder='filter by token name'></input>
-      </div>
-      <DataTable rawData={rawData} ></DataTable>
-    </div>
-
-      <div>
-      <button>Prev</button>
-      <button>1</button>
-      <button>Next</button>
-      </div>
-
+      <br/>
+      <Footer></Footer>
     </div>
   )
 }
