@@ -17,7 +17,9 @@ Crypto Dash User Story
 Improvement if there is time:
 1. Add toggle for global stats
 2. Add a button bottom right corner, onClick to jump to the top of the page
+3. Search bar should take data from another API that pull all the universe of token, not just the current displayed coins on the dashboard aka need to a different fetch
 
 
 Others: 
 1. Use a Chart library to draw historical price
+

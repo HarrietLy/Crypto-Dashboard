@@ -3,56 +3,58 @@ import './App.css'
 // import "bootstrap/dist/css/bootstrap.min.css";
 import "purecss/build/pure.css"
 import DataTableWFilter from './Components/DataTable/DataTableWFilter'
-import SearchBar from './Components/SearchBar'
+import SearchBar from './Components/Search/SearchBar'
 import NavBar from './Components/NavBar'
 import Footer from './Components/Footer'
-import { Route, Routes,useNavigate } from 'react-router-dom'
+import { Outlet, Route, Routes, useNavigate, useLocation, useSearchParams } from 'react-router-dom'
 import About from "./Components/About"
 import Coin from './Components/Coin'
 import BaseCurrency from './Components/BaseCurrency'
 
 function App() {
+  const navigate = useNavigate()
+  const location = useLocation()
 
-  const [rawData, setRawData] = useState([])
-  const [baseMoney, setBaseMoney] =useState('usd')
+  const [baseMoney, setBaseMoney] = useState(location.pathname.length>1 ? location.pathname.substring(1,4) : 'usd')
  
-
-  const getAPIdata = (baseMoney,items_per_page,page) => {
-    fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=${baseMoney}&order=market_cap_desc&per_page=${items_per_page}&page=${page}&sparkline=true&price_change_percentage=24h%2C7d%2C30d`)
-      .then((response) => response.json())
-      .then((json) => {
-        setRawData(json)
-      })
+  const handleSelect = (e) => {
+    const newBaseMoney = e.target.value
+    setBaseMoney(newBaseMoney)
+    const currentURLPath = location.pathname
+    const currentURLSearchParam = location.search
+    navigate({pathname:'/'+newBaseMoney+currentURLPath.substring(1+newBaseMoney.length),
+              search: currentURLSearchParam
+              }//assume baseCurrency always has the same length
+            ) 
   }
 
-  useEffect(() => {
-    getAPIdata(baseMoney,100,1)
-  }, [baseMoney])
-
-  const handleSelect=(e)=>{
-    setBaseMoney(e.target.value)
-    //everytime how to hange URL?
+  const Layout = () => {
+    return (
+      <>
+        <NavBar baseMoney={baseMoney} /><br />
+        <BaseCurrency handleSelect={handleSelect} /><br /><br />
+        <SearchBar/>
+        <Outlet />
+      </>
+    )
   }
 
   return (
     <div className="App">
-      <NavBar baseMoney={baseMoney} /><br/>
-      <BaseCurrency handleSelect={handleSelect}/><br/><br/>
-      <SearchBar rawData={rawData} baseMoney={baseMoney} />
-
       <Routes>
-        <Route path='/' >
-          <Route index element={<DataTableWFilter rawData={rawData} baseMoney ={baseMoney}/>}/>
+        <Route path='/' element={<Layout />} >
+          <Route index element={<DataTableWFilter baseMoney={baseMoney}/>} />
           <Route path='about' element={<About />} />
-          <Route path=":baseMoney"element={<DataTableWFilter rawData={rawData} baseMoney ={baseMoney}/>} />
-          <Route path=':baseMoney/coins/:coinID' element={<Coin baseMoney ={baseMoney}/> } />
+          <Route path=":baseMoneyURL" element={<DataTableWFilter baseMoney={baseMoney}/>} />
+          <Route path=':baseMoneyURL/coins/:coinID' element={<Coin />} />
         </Route>
       </Routes>
 
-      <br/>
+      <br />
       <Footer></Footer>
     </div>
   )
 }
 
 export default App
+
