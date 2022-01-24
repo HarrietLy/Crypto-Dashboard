@@ -1,4 +1,4 @@
-import { useParams } from 'react-router'
+import { useParams } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { Line } from 'react-chartjs-2'
 import PeriodSelector from './PeriodSelector';
@@ -18,12 +18,10 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 export default function PriceChart() {
     const { baseMoneyURL, coinID } = useParams()
     const [rawPriceData, setRawPriceData] = useState({})
-    const [period, setPeriod] = useState('max')
-    const [interval, setInterval] = useState('daily')
+    const [period, setPeriod] = useState(1)
+    const [interval, setInterval] = useState('minutely')
 
-    const periodOptions = [1, 7, 14, 30, 90, 180, 365, 'max']
-
-
+    //const periodOptions = [1, 7, 14, 30, 90, 180, 365, 'max']
     const convertToDate = (unixtimestamp) => {
         const date = new Date(unixtimestamp)
         const month = date.toLocaleString('default',{month:'short'})
@@ -85,14 +83,23 @@ export default function PriceChart() {
         }]
     }
 
-    const handleChangePeriod =()=>{
-        
+    const handleClickPeriod =(e)=>{
+        console.log('handleChangePeriod')
+        const periodMapping ={'24h':1, '7d':7,'14d':14,'30d':30,'90d':90,'180d':180,'1y':365,'Max':'max'}
+        const intervalMapping ={'24h':'minute', '7d':'minute','14d':'minute','30d':'hourly','90d':'hourly','180d':'hourly','1y':'hourly','Max':'hourly'}
+
+        console.log('period selected',periodMapping[e.target.value])
+        console.log('interval selected',intervalMapping[e.target.value])
+        setPeriod(periodMapping[e.target.value])
+        setInterval(intervalMapping[e.target.value])
     }
+    
+
     return (
         <>
             <h3>Historical Price Chart</h3>
-            <PeriodSelector periodOptions={periodOptions} 
-                period={period} handleChangePeriod={handleChangePeriod}/>
+            <PeriodSelector
+                period={period} handleClickPeriod={handleClickPeriod}/>
             <Line data={data} options={options}
             />
         </>
