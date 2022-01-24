@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"
-import { useParams } from "react-router";
+import { useParams } from "react-router-dom";
 
 export default function SearchBar() {
     const [searchQ, setSearchQ] = useState('')
@@ -40,10 +40,17 @@ export default function SearchBar() {
     }
 
     return (
-        <div onBlur={() => { setSuggestions([]); setSearchQ('') }}>
+        <div>
             <input placeholder='Search in Top 250' type='search' style={{ 'width': '250px' }}
                 value={searchQ}
-                onChange={(e) => handleChangeSearch(e.target.value, rawCoinIDs)}>
+                onChange={(e) => handleChangeSearch(e.target.value, rawCoinIDs)}
+                onBlur={()=>{
+                    setTimeout(()=>{
+                        setSuggestions([]); 
+                        setSearchQ('') 
+                    },300)
+                }}
+                >
             </input>
             <div className="suggestion-box">
                 {suggestions.map((row, i) =>

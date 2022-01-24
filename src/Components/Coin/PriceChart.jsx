@@ -8,12 +8,10 @@ import {
     LinearScale,
     PointElement,
     LineElement,
-    Title,
     Tooltip,
-    Legend,
 } from 'chart.js';
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend)
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip)
 
 export default function PriceChart() {
     const { baseMoneyURL, coinID } = useParams()
@@ -21,11 +19,10 @@ export default function PriceChart() {
     const [period, setPeriod] = useState(1)
     const [interval, setInterval] = useState('minutely')
 
-    //const periodOptions = [1, 7, 14, 30, 90, 180, 365, 'max']
     const convertToDate = (unixtimestamp) => {
         const date = new Date(unixtimestamp)
         const month = date.toLocaleString('default',{month:'short'})
-        return date.getDate()+'. '+month
+        return date.toUTCString()
     }
 
     const getCoinPriceData = (base, coin, period, interval) => {
@@ -49,20 +46,30 @@ export default function PriceChart() {
         yArray.push(rawPriceData.prices?.[i][1].toFixed(2))
     }
 
+
+    const tooltipVerticalLine={
+        id:'tooltipVerticalLine',
+        afterDraw:(chart) =>{
+            if(chart.tooltip?._active && chart.tooltip?._active.length){
+                const ctx=chart.ctx
+                ctx.save();
+                const activePoint=chart.tooltip?._active[0]
+                ctx.beginPath();
+                ctx.moveTo(activePoint.element.x, chart.scales.y.top);
+                ctx.lineTo(activePoint.element.x, chart.scales.y.bottom);
+                ctx.lineWidth =2;
+                ctx.strokeStyle='red';
+                ctx.stroke();
+                ctx.restore();
+            }
+        }
+    }
     const options = {
         responsive: true,
-        plugins: {
-          legend: {
-            display: false,
-          },
-          tooltip:{
-              ///
-          }
-        //   title: {
-        //     display: true,
-        //     text: 'Price Line Chart',
-        //   },
-  
+        plugins:{
+            tooltip:{
+                yAlign:'bottom'
+            }
         },
         elements:{
             point:{
@@ -71,8 +78,25 @@ export default function PriceChart() {
             line:{
                 borderWidth: 2,
             } 
+        },
+        interaction:{
+            intersect: false,
+            mode: 'index',
         }
+        // scales:{
+        //     x:{
+        //         ticks:{
+        //             callback: function(val,index,ticks){
+        //                 console.log(index)
+        //                 return val
+        //             }
+        //         }
+        //     }
+        // }
       };
+
+
+    
     const data = {
         labels: xArray,
         datasets: [{
@@ -83,24 +107,21 @@ export default function PriceChart() {
         }]
     }
 
+    const periodMapping ={'24h':1, '7d':7,'14d':14,'30d':30,'90d':90,'180d':180,'1y':365,'Max':'max'}
     const handleClickPeriod =(e)=>{
         console.log('handleChangePeriod')
-        const periodMapping ={'24h':1, '7d':7,'14d':14,'30d':30,'90d':90,'180d':180,'1y':365,'Max':'max'}
-        const intervalMapping ={'24h':'minute', '7d':'minute','14d':'minute','30d':'hourly','90d':'hourly','180d':'hourly','1y':'hourly','Max':'hourly'}
-
-        console.log('period selected',periodMapping[e.target.value])
-        console.log('interval selected',intervalMapping[e.target.value])
+        const intervalMapping ={'24h':'minute', '7d':'minute','14d':'minute','30d':'minute','90d':'hourly','180d':'hourly','1y':'hourly','Max':'hourly'} //this is contrained by the free API so API may return less granular data
         setPeriod(periodMapping[e.target.value])
         setInterval(intervalMapping[e.target.value])
     }
     
-
     return (
         <>
             <h3>Historical Price Chart</h3>
             <PeriodSelector
-                period={period} handleClickPeriod={handleClickPeriod}/>
-            <Line data={data} options={options}
+                period={period} handleClickPeriod={handleClickPeriod}
+                periodMapping={periodMapping}/>
+            <Line data={data} options={options} plugins={[tooltipVerticalLine]}
             />
         </>
     )
