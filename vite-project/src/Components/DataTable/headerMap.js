@@ -6,7 +6,7 @@ export default  {
     'symbol': 'Symbol',
     'current_price': 'Price',
     'market_cap': 'Mkt Cap',
-    "last_updated": 'Last Update (UTC)',
+    "last_updated": 'Last Update',
     "price_change_percentage_24h_in_currency": '24h', 
     'price_change_percentage_7d_in_currency': '7d',
     'price_change_percentage_30d_in_currency': '30d',
