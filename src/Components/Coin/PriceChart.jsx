@@ -18,8 +18,8 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 export default function PriceChart() {
     const { baseMoneyURL, coinID } = useParams()
     const [rawPriceData, setRawPriceData] = useState({})
-    const [period, setPeriod] = useState('30')
-    const [interval, setInterval] = useState('hourly')
+    const [period, setPeriod] = useState('max')
+    const [interval, setInterval] = useState('daily')
 
     const periodOptions = [1, 7, 14, 30, 90, 180, 365, 'max']
 
@@ -55,7 +55,7 @@ export default function PriceChart() {
         responsive: true,
         plugins: {
           legend: {
-            position: 'top',
+            display: false,
           },
           tooltip:{
               ///
@@ -72,8 +72,7 @@ export default function PriceChart() {
             },
             line:{
                 borderWidth: 2,
-            }
-            
+            } 
         }
       };
     const data = {
@@ -85,10 +84,15 @@ export default function PriceChart() {
             backgroundColor: 'rgba(0, 0, 225,0.8)'
         }]
     }
+
+    const handleChangePeriod =()=>{
+        
+    }
     return (
         <>
             <h3>Historical Price Chart</h3>
-            <PeriodSelector periodOptions={periodOptions} period={period}/>
+            <PeriodSelector periodOptions={periodOptions} 
+                period={period} handleChangePeriod={handleChangePeriod}/>
             <Line data={data} options={options}
             />
         </>
