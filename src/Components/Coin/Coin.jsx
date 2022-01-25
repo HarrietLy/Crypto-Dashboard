@@ -22,7 +22,8 @@ export default function Coin(){
     return (
         <> 
         <h1>{rawCoinData.name} ({rawCoinData?.symbol?.toUpperCase()})</h1>
-        <p> baseMoneyURL param should also be {baseMoneyURL}</p>
+        <h3>base currency symbol current price</h3>
+        <p> Market cap Rank</p>
         <PriceChart/>
         <h3>Description:</h3> 
         {rawCoinData?.description?.en.replace(/<(.*?)>/g,'')}

@@ -21,7 +21,6 @@ export default function PriceChart() {
 
     const convertToDate = (unixtimestamp) => {
         const date = new Date(unixtimestamp)
-        const month = date.toLocaleString('default',{month:'short'})
         return date.toUTCString()
     }
 
@@ -46,19 +45,28 @@ export default function PriceChart() {
         yArray.push(rawPriceData.prices?.[i][1].toFixed(2))
     }
 
+    const data = {
+        labels: xArray,
+        datasets: [{
+            label: 'Price',
+            data: yArray,
+            borderColor: 'rgba(0, 0, 225,0.8)',
+            backgroundColor: 'rgba(0, 0, 225,0.8)'
+        }]
+    }
 
     const tooltipVerticalLine={
         id:'tooltipVerticalLine',
-        afterDraw:(chart) =>{
+        beforeDraw:(chart) =>{
             if(chart.tooltip?._active && chart.tooltip?._active.length){
                 const ctx=chart.ctx
-                ctx.save();
                 const activePoint=chart.tooltip?._active[0]
+                ctx.save();
                 ctx.beginPath();
                 ctx.moveTo(activePoint.element.x, chart.scales.y.top);
                 ctx.lineTo(activePoint.element.x, chart.scales.y.bottom);
                 ctx.lineWidth =2;
-                ctx.strokeStyle='red';
+                ctx.strokeStyle='#D3D3D3'
                 ctx.stroke();
                 ctx.restore();
             }
@@ -82,30 +90,21 @@ export default function PriceChart() {
         interaction:{
             intersect: false,
             mode: 'index',
-        }
-        // scales:{
-        //     x:{
-        //         ticks:{
-        //             callback: function(val,index,ticks){
-        //                 console.log(index)
-        //                 return val
-        //             }
-        //         }
-        //     }
-        // }
+        },
+        scales:{
+            x:{
+                ticks:{
+                    callback: function(value,index){
+                        const unixTime=this.getLabelForValue(value)
+                        const date = new Date(unixTime)
+                        const month = date.toLocaleString('default',{month:'short'})
+                        const year = date.getFullYear()
+                        return index%4===0? `${date.getDate()}. ${month} ${year}`:''
+                    }
+                }
+            }
+        },
       };
-
-
-    
-    const data = {
-        labels: xArray,
-        datasets: [{
-            label: 'Price',
-            data: yArray,
-            borderColor: 'rgba(0, 0, 225,0.8)',
-            backgroundColor: 'rgba(0, 0, 225,0.8)'
-        }]
-    }
 
     const periodMapping ={'24h':1, '7d':7,'14d':14,'30d':30,'90d':90,'180d':180,'1y':365,'Max':'max'}
     const handleClickPeriod =(e)=>{
