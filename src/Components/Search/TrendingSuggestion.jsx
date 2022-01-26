@@ -5,25 +5,36 @@ import { useNavigate, useParams } from 'react-router-dom'
 export default function TrendingSuggestion({ trendingIsShown }) {
 
     const [trendingSearch, setTrendingSearch] = useState([])
-    const {baseMoneyURL, coinID} = useParams()
+    const {baseMoneyURL} = useParams()
     const navigate = useNavigate()
 
     useEffect(() => {
-        fetch('https://api.coingecko.com/api/v3/search/trending')
+        console.log('useeffect trending')
+        const abortCont = new AbortController()
+        fetch('https://api.coingecko.com/api/v3/search/trending', {signal:abortCont.signal})
             .then(response => response.json())
             .then(json => {
                 setTrendingSearch(json)
-                console.log(json.coins)
             })
+            .catch(err=>{
+                if(err.name==='AbortError'){
+                    console.log('TrendingFetchAborted')
+                }
+                console.log('err in clean up trending',err)
+            })
+        return ()=>{
+            console.log('clean up trending')
+            abortCont.abort()
+        }
     }, [])
 
-    const handleClickTrendingSuggestion = () => {
+    const handleClickTrendingSuggestion = (coinID) => {
         console.log('handleClick trending')
         navigate('/' + (baseMoneyURL || 'usd') + '/coins/' + coinID)
     }
     const trendingContent = trendingSearch?.coins?.map((item, i) => 
                         <div key={i} className='suggestions'
-                            onClick ={handleClickTrendingSuggestion}>
+                            onClick ={()=>handleClickTrendingSuggestion(item.item.id)}>
                             <img src={item.item.thumb} alt='symbol' height='15px' width='15px'/>
                              {item.item.name} ({item.item.symbol}) #{item.item.market_cap_rank}
                         </div>)

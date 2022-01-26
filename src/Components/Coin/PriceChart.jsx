@@ -10,6 +10,7 @@ import {
     LineElement,
     Tooltip,
 } from 'chart.js';
+import loading from '../loading.svg'
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip)
 
@@ -17,32 +18,42 @@ export default function PriceChart() {
     const { baseMoneyURL, coinID } = useParams()
     const [rawPriceData, setRawPriceData] = useState({})
     const [period, setPeriod] = useState(1)
-    const [interval, setInterval] = useState('minutely')
+    const [status, setStatus] = useState('')
 
     const convertToDate = (unixtimestamp) => {
         const date = new Date(unixtimestamp)
         return date.toUTCString()
     }
 
-    const getCoinPriceData = (base, coin, period, interval) => {
-        fetch(`https://api.coingecko.com/api/v3/coins/${coin}/market_chart?vs_currency=${base}&days=${period}&interval=${interval}`)
+    useEffect(() => {
+        const periodToIntervalMap={1:'minute', 7:'minute',14:'minute',30:'minute',90:'hourly',180:'hourly',365:'hourly','Max':'hourly'}  //this is contrained by the free API so API may return less granular data
+        setStatus('pending')
+        const abortCont =new AbortController()
+        fetch(`https://api.coingecko.com/api/v3/coins/${coinID}/market_chart?vs_currency=${baseMoneyURL}&days=${period}&interval=${periodToIntervalMap[period]}`,{signal:abortCont.signal})
             .then(response => response.json())
             .then(json => {
                 json.prices?.map((point)=>{point[0] = convertToDate(point[0])});
                 setRawPriceData(json)
+                setStatus('success')
             })
-    }
-
-    useEffect(() => {
-        getCoinPriceData(baseMoneyURL, coinID, period, interval)
-    }, [baseMoneyURL, coinID, period, interval])
-
-    // console.log('rawPriceData price', rawPriceData.prices)
+            .catch(err=>{
+                if(err==='AbortError'){
+                    console.log('fetch coin price aborted')
+                } else{
+                    setStatus('error')
+                    console.log('error when fetching coin price',err)
+                }
+            })
+        return ()=>{
+            console.log('clean up fetch coin price')
+            abortCont.abort()
+        }
+    }, [baseMoneyURL, coinID, period])
 
     const xArray =[], yArray=[]
     for (let i =0; i<rawPriceData.prices?.length; i++){
         xArray.push(rawPriceData.prices?.[i][0])
-        yArray.push(rawPriceData.prices?.[i][1].toFixed(2))
+        yArray.push(rawPriceData.prices?.[i][1])
     }
 
     const data = {
@@ -67,8 +78,7 @@ export default function PriceChart() {
                 ctx.lineTo(activePoint.element.x, chart.scales.y.bottom);
                 ctx.lineWidth =2;
                 ctx.strokeStyle='#D3D3D3'
-                ctx.stroke();
-                ctx.restore();
+                ctx.stroke();//ctx.restore();
             }
         }
     }
@@ -94,12 +104,13 @@ export default function PriceChart() {
         scales:{
             x:{
                 ticks:{
-                    callback: function(value,index){
+                    maxTicksLimit: 8.1,
+                    callback: function(value){
                         const unixTime=this.getLabelForValue(value)
                         const date = new Date(unixTime)
                         const month = date.toLocaleString('default',{month:'short'})
                         const year = date.getFullYear()
-                        return index%4===0? `${date.getDate()}. ${month} ${year}`:''
+                        return `${date.getDate()}. ${month} ${year}`
                     }
                 }
             }
@@ -109,14 +120,16 @@ export default function PriceChart() {
     const periodMapping ={'24h':1, '7d':7,'14d':14,'30d':30,'90d':90,'180d':180,'1y':365,'Max':'max'}
     const handleClickPeriod =(e)=>{
         console.log('handleChangePeriod')
-        const intervalMapping ={'24h':'minute', '7d':'minute','14d':'minute','30d':'minute','90d':'hourly','180d':'hourly','1y':'hourly','Max':'hourly'} //this is contrained by the free API so API may return less granular data
         setPeriod(periodMapping[e.target.value])
-        setInterval(intervalMapping[e.target.value])
     }
     
     return (
         <>
-            <h3>Historical Price Chart</h3>
+            <h4>Historical Price Chart
+                <span> {(status==='pending')?<img src={loading} width = '15px' height='15px'/>
+                :(status==='error')?'error':'' }
+                </span>
+            </h4>
             <PeriodSelector
                 period={period} handleClickPeriod={handleClickPeriod}
                 periodMapping={periodMapping}/>

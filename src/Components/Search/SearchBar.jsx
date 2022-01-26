@@ -19,15 +19,13 @@ export default function SearchBar() {
             .then(response => response.json())
             .then(json => { setRawCoinIDs(json) })
             .catch(err => {
-                console.log('err', err)
                 if (err.name === 'AbortError') {
                     console.log('fetchSearchAborted')
                 }
             })
         return () => {
-            console.log('running clean up')
-            console.log('abortCont', abortCont)
             abortCont.abort()
+            console.log('fetchSearchAborted cleanup')
         }
     }, [])
 
@@ -53,7 +51,10 @@ export default function SearchBar() {
 
     const handleClickTrending = () => {
         console.log('handleClickTrending')
-        if (searchQ) { setTrendingIsShown(false) } else { setTrendingIsShown(true) }
+        if (searchQ) { setTrendingIsShown(false) }
+        else {
+            setTrendingIsShown(true)
+        }
     }
 
     return (
@@ -78,6 +79,7 @@ export default function SearchBar() {
                 {suggestions.map((row, i) =>
                     <div key={i} className="suggestions"
                         onClick={() => handleClickSuggest(row.id)}>
+                        <img  src={row.image} width='15' height='15' alt='currency-symbol'/>    
                         {row.name} ({row.symbol.toUpperCase()}), #{row.market_cap_rank}
                     </div>)}
             </div>
