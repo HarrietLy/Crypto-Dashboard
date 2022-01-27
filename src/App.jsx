@@ -8,6 +8,7 @@ import { Outlet, Route, Routes, useNavigate, useLocation, useSearchParams } from
 import About from "./Components/About"
 import Coin from './Components/Coin/Coin'
 import BaseCurrency from './Components/BaseCurrency'
+import NotFound from './Components/NotFound'
 
 function App() {
   const navigate = useNavigate()
@@ -43,8 +44,8 @@ function App() {
         <Route path='/' element={<Layout />} >
           <Route index element={<DataTableWFilter />} />
           <Route path='about' element={<About />} />
-          <Route path=":baseMoneyURL" element={<DataTableWFilter/>} />
-          <Route path=':baseMoneyURL/coins/:coinID' element={<Coin />} />
+            <Route path=":baseMoneyURL" element={<DataTableWFilter/>} />
+              <Route path=':baseMoneyURL/:coinID' element={<Coin />} />
         </Route>
       </Routes>
 

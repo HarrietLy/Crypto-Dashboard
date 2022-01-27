@@ -30,7 +30,7 @@ export default function TrendingSuggestion({ trendingIsShown }) {
 
     const handleClickTrendingSuggestion = (coinID) => {
         console.log('handleClick trending')
-        navigate('/' + (baseMoneyURL || 'usd') + '/coins/' + coinID)
+        navigate('/' + (baseMoneyURL || 'usd') + '/' + coinID)
     }
     const trendingContent = trendingSearch?.coins?.map((item, i) => 
                         <div key={i} className='suggestions'

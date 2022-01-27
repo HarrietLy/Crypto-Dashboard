@@ -31,7 +31,7 @@ export default function SearchBar() {
 
     const handleClickSuggest = (coinID) => {
         console.log('handleClickSuggest')
-        navigate('/' + (baseMoneyURL || 'usd') + '/coins/' + coinID)
+        navigate('/' + (baseMoneyURL || 'usd') +'/'+ coinID)
         setSuggestions([])
     }
 

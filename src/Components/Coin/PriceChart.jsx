@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { Line } from 'react-chartjs-2'
 import PeriodSelector from './PeriodSelector';
+import error from '../error.png'
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -127,7 +128,7 @@ export default function PriceChart() {
         <>
             <h4>Historical Price Chart
                 <span> {(status==='pending')?<img src={loading} width = '15px' height='15px'/>
-                :(status==='error')?'error':'' }
+                :(status==='error')?<img src={error} alt='error' height='15px' width='15px'/>:'' }
                 </span>
             </h4>
             <PeriodSelector

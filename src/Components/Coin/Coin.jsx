@@ -3,6 +3,7 @@ import PriceChart from "./PriceChart";
 import { useState, useEffect } from "react";
 import baseMoneyMap from "../DataTable/baseMoneyMap";
 import loading from '../loading.svg'
+import NotFound from "../NotFound";
 
 export default function Coin() {
 
@@ -12,32 +13,40 @@ export default function Coin() {
 
     useEffect(() => {
         console.log('useEffect for coin desc')
-        const abortCont = new AbortController()
+        //const abortCont = new AbortController()
         setStatus('pending')
-        fetch(`https://api.coingecko.com/api/v3/coins/${coinID}?tickers=true&market_data=true&community_data=true&developer_data=true&sparkline=false`, { signal: abortCont.signal })
-            .then(response => response.json())
+        fetch(`https://api.coingecko.com/api/v3/coins/${coinID}?tickers=true&market_data=true&community_data=true&developer_data=true&sparkline=false`)
+            .then(response => 
+                {if (!response.ok) {
+                    setStatus('error')
+                    const err = new Error('response is not ok')
+                    err.response = response
+                    throw err
+                } 
+                else return response.json() }
+            )
             .then(json => {
                 setRawCoinData(json)
                 setStatus('success')
             })
             .catch(err => {
-                if (err === 'AbortError') {
-                    console.log('fetch coin desc aborted')
-                } else {
+                // if (err === 'AbortError') {
+                //     console.log('fetch coin desc aborted')
+                // } else {
                     console.log('error when calling coin desc', err)
                     setStatus('error')
-                }
+                // }
             })
-        return () => {
-            console.log('clean up fetch coin desc')
-            abortCont.abort()
-        }
+        // return () => {
+        //     console.log('clean up fetch coin desc')
+        //     abortCont.abort()
+        // }
     }, [coinID])
 
     return (
         <>
             {(status === 'pending') ? <img src={loading} width='100px' height='100px' />
-            :(status === 'error') ? 'There is an error while loading this page.'
+            :(status === 'error') ? <NotFound/>
                 : <div>
                     <h2><img alt='symbol' src={rawCoinData?.image?.thumb} />
                         {rawCoinData.name} ({rawCoinData?.symbol?.toUpperCase()})

@@ -18,26 +18,27 @@ export default function DataTableWFilter() {
 
     useEffect(() => {
         console.log('pageNum to fetch', pageNum)
-        const abortCont = new AbortController()
+        // const abortCont = new AbortController()
         setStatus('pending')
-        fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=${baseMoneyURL||'usd'}&order=market_cap_desc&per_page=100&page=${pageNum}&sparkline=true&price_change_percentage=24h%2C7d%2C30d`, {signal: abortCont.signal})
+        fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=${baseMoneyURL||'usd'}&order=market_cap_desc&per_page=100&page=${pageNum}&sparkline=true&price_change_percentage=24h%2C7d`)
         .then((response) => response.json())
         .then((json) => { 
             setRawData(json) 
+            console.log('json',json)
             setStatus('success')
         })
         .catch((error)=>{
-            if (error==='AbortError'){
-                console.log('fetch data table aborted')
-            }else {
+            // if (error==='AbortError'){
+            //     console.log('fetch data table aborted')
+            // }else {
             setStatus('error')
             console.log('error when fetch data table', error)
-            }
+            // }
         })
-        return ()=>{
-            abortCont.abort()
-            console.log('clean up of fetch data table')
-        }
+        // return ()=>{
+        //     // abortCont.abort()
+        //     // console.log('clean up of fetch data table')
+        // }
     }, [pageNum])
 
     const filter = (rows) => {
@@ -69,8 +70,9 @@ export default function DataTableWFilter() {
                 handleChangeFilter={(e) => { setFilterQ(e.target.value) }} />
             <div>
             {(status==='pending')
-                ? <img src={loading} width = '100px' height='100px'/> 
-                :<Table filter={filter} rawData={rawData} />
+                ? <img src={loading} width = '100px' height='100px'/>
+                :(status==='error')?'error' 
+                : <Table filter={filter} rawData={rawData} />
             }
             </div>
         </>

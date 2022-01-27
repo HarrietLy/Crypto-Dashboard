@@ -33,8 +33,8 @@ export default function Table({ rawData, filter }) {
                                         coinID={row['id']} />
                                 </td>
 
-                                : (header === 'symbol') ? <td key={i} onClick={() => { navigate('/' + (baseMoneyURL || 'usd') + '/coins/' + row['id']) }} style={{ cursor: 'pointer' }}> {row[header].toUpperCase()}</td>
-                                    : (header === 'name') ? <td key={i} onClick={() => { navigate('/' + (baseMoneyURL || 'usd') + '/coins/' + row['id']) }} style={{ cursor: 'pointer' }}>  {row[header]}
+                                : (header === 'symbol') ? <td key={i} onClick={() => { navigate('/' + (baseMoneyURL || 'usd') +'/' + row['id']) }} style={{ cursor: 'pointer' }}> {row[header].toUpperCase()}</td>
+                                    : (header === 'name') ? <td key={i} onClick={() => { navigate('/' + (baseMoneyURL || 'usd') +'/'+ row['id']) }} style={{ cursor: 'pointer' }}>  {row[header]}
 
                                     </td>
                                         : (header === 'price_change_percentage_24h_in_currency' ||
