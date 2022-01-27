@@ -6,7 +6,7 @@ export default function About() {
         <div className="about">
             <div>
             <p>This web appliation was coded using Javascript and ReactJS library</p>
-            <p>Price Line Chart: created using Chart JS library</p>
+            <p>Price Line Chart: Chart JS library</p>
             <p>Data source: CoinGecko API</p>
             <p>Style: adapted from Sakura CSS framework</p>
             <br/>
@@ -14,7 +14,7 @@ export default function About() {
             </div> <br/>
             
             <div  >
-                <a href='https://github.com/harrietly'>
+                <a href='https://github.com/HarrietLy/Crypto-Dashboard'>
                 <img alt='github-repos' src={github} width='50px' height='50px' style={{padding: '30px'}} />
                 </a>
                 <a href='https://www.linkedin.com/in/harrietly/'>
