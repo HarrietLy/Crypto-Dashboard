@@ -13,12 +13,10 @@ export default function Coin() {
 
     useEffect(() => {
         console.log('useEffect for coin desc')
-        //const abortCont = new AbortController()
         setStatus('pending')
         fetch(`https://api.coingecko.com/api/v3/coins/${coinID}?tickers=true&market_data=true&community_data=true&developer_data=true&sparkline=false`)
             .then(response => 
                 {if (!response.ok) {
-                    setStatus('error')
                     const err = new Error('response is not ok')
                     err.response = response
                     throw err
@@ -30,17 +28,9 @@ export default function Coin() {
                 setStatus('success')
             })
             .catch(err => {
-                // if (err === 'AbortError') {
-                //     console.log('fetch coin desc aborted')
-                // } else {
                     console.log('error when calling coin desc', err)
                     setStatus('error')
-                // }
             })
-        // return () => {
-        //     console.log('clean up fetch coin desc')
-        //     abortCont.abort()
-        // }
     }, [coinID])
 
     return (

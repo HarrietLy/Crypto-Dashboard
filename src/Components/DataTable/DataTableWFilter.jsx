@@ -4,7 +4,9 @@ import Table from "./Table"
 import Pagination from './Pagination'
 import { useParams } from "react-router";
 import { useSearchParams } from "react-router-dom";
-import loading from'../loading.svg'
+import loading from '../loading.svg'
+import NotFound from "../NotFound";
+import ReactPaginate from "react-paginate";
 
 export default function DataTableWFilter() {
     const [searchParams, setSearchParams] = useSearchParams({})
@@ -14,31 +16,28 @@ export default function DataTableWFilter() {
     const [filterQ, setFilterQ] = useState('')
     const [status, setStatus] = useState('')
 
-    const {baseMoneyURL} = useParams()
+    const { baseMoneyURL } = useParams()
 
     useEffect(() => {
         console.log('pageNum to fetch', pageNum)
-        // const abortCont = new AbortController()
         setStatus('pending')
-        fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=${baseMoneyURL||'usd'}&order=market_cap_desc&per_page=100&page=${pageNum}&sparkline=true&price_change_percentage=24h%2C7d`)
-        .then((response) => response.json())
-        .then((json) => { 
-            setRawData(json) 
-            console.log('json',json)
-            setStatus('success')
-        })
-        .catch((error)=>{
-            // if (error==='AbortError'){
-            //     console.log('fetch data table aborted')
-            // }else {
-            setStatus('error')
-            console.log('error when fetch data table', error)
-            // }
-        })
-        // return ()=>{
-        //     // abortCont.abort()
-        //     // console.log('clean up of fetch data table')
-        // }
+        fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=${baseMoneyURL || 'usd'}&order=market_cap_desc&per_page=100&page=${pageNum}&sparkline=true&price_change_percentage=24h%2C7d`)
+            .then((response) => {
+                if (!response.ok) {
+                    const err = new Error('response is not ok')
+                    err.response = response
+                    throw err
+                } else
+                    return response.json()
+            })
+            .then((json) => {
+                setRawData(json)
+                setStatus('success')
+            })
+            .catch((error) => {
+                setStatus('error')
+                console.log('error when fetch data table', error)
+            })
     }, [pageNum])
 
     const filter = (rows) => {
@@ -61,19 +60,39 @@ export default function DataTableWFilter() {
         }
     }
 
+    const handlePageChangeLib=(e)=>{
+        console.log(e)
+        setPageNum(e.selected)
+        setSearchParams({ page: e.selected })
+    }
+
     return (
         <>
-            <h3 >Crypto Currency Ranking by Market Cap</h3>
-
-            <Pagination pageNum={pageNum} handleChangePage={handleChangePage} handlePrevNextPage={handlePrevNextPage} /><br/>
+            <h3 >Crypto Currency Ranking</h3>
+            <br/>
+            <Pagination pageNum={pageNum} 
+                        handleChangePage={handleChangePage} 
+                        handlePrevNextPage={handlePrevNextPage}
+                        /><br />
+            {/* react paginate lib - not in use as it cannot work with search params  */}
+            {/* <ReactPaginate 
+                previousLabel='<Prev'
+                nextLabel='Next>'
+                pageCount={101}
+                onPageChange={handlePageChangeLib}
+                containerClassName='paginationBttns'
+                previousLinkClassName='previousBttn'
+                nextLinkClassName='nextBttn'
+                activeClassName='paginationActive'
+            /> */}
             <FilterBox filterQ={filterQ}
-                handleChangeFilter={(e) => { setFilterQ(e.target.value) }} />
+                        handleChangeFilter={(e) => { setFilterQ(e.target.value) }} />
             <div>
-            {(status==='pending')
-                ? <img src={loading} width = '100px' height='100px'/>
-                :(status==='error')?'error' 
-                : <Table filter={filter} rawData={rawData} />
-            }
+                {(status === 'pending')
+                    ? <img src={loading} width='100px' height='100px' />
+                    : (status === 'error') ? <NotFound />
+                        : <Table filter={filter} rawData={rawData} />
+                }
             </div>
         </>
     )

@@ -8,31 +8,36 @@ import { Outlet, Route, Routes, useNavigate, useLocation, useSearchParams } from
 import About from "./Components/About"
 import Coin from './Components/Coin/Coin'
 import BaseCurrency from './Components/BaseCurrency'
-import NotFound from './Components/NotFound'
 
 function App() {
   const navigate = useNavigate()
   const location = useLocation()
 
-  //const [baseMoney, setBaseMoney] = useState(location.pathname.length>1 ? location.pathname.substring(1,4) : 'usd')
- 
   const handleSelect = (e) => {
     const newBaseMoney = e.target.value
-    // setBaseMoney(newBaseMoney)
+
     const currentURLPath = location.pathname
     const currentURLSearchParam = location.search
-    navigate({pathname:'/'+newBaseMoney+currentURLPath.substring(1+newBaseMoney.length),
-              search: currentURLSearchParam
-              }//assume baseCurrency always has the same length
-            ) 
+    navigate({
+      pathname: '/' + newBaseMoney + currentURLPath.substring(1 + newBaseMoney.length),
+      search: currentURLSearchParam
+    }//assume baseCurrency always has the same length
+    )
   }
 
   const Layout = () => {
     return (
       <>
-        <NavBar /><br />
-        <BaseCurrency handleSelect={handleSelect} /><br /><br />
-        <SearchBar/>
+        <div>
+          <NavBar />
+        </div>
+        <div className="currency-selector">
+          <BaseCurrency handleSelect={handleSelect} />
+        </div>
+        <div className="search-bar">
+          <SearchBar />
+        </div>
+        <br />
         <Outlet />
       </>
     )
@@ -44,8 +49,8 @@ function App() {
         <Route path='/' element={<Layout />} >
           <Route index element={<DataTableWFilter />} />
           <Route path='about' element={<About />} />
-            <Route path=":baseMoneyURL" element={<DataTableWFilter/>} />
-              <Route path=':baseMoneyURL/:coinID' element={<Coin />} />
+          <Route path=":baseMoneyURL" element={<DataTableWFilter />} />
+          <Route path=':baseMoneyURL/:coinID' element={<Coin />} />
         </Route>
       </Routes>
 

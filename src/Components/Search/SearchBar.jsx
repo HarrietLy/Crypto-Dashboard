@@ -58,8 +58,8 @@ export default function SearchBar() {
     }
 
     return (
-        <div>
-            <input placeholder='Search in Top 250' type='search' style={{ 'width': '250px' }}
+        <div >
+            <input placeholder='Search in Top 250' type='search' style={{width:'250px'}}
                 value={searchQ}
                 onClick={handleClickTrending}
                 onChange={(e) => handleChangeSearch(e.target.value, rawCoinIDs)}

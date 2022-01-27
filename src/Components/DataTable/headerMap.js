@@ -1,6 +1,6 @@
 
 export default  {
-    'market_cap_rank': "#",
+    'market_cap_rank': "#Mkt. Cap",
     'image': ' ',
     'name': 'Token Name',
     'symbol': 'Symbol',

@@ -29,26 +29,23 @@ export default function PriceChart() {
     useEffect(() => {
         const periodToIntervalMap={1:'minute', 7:'minute',14:'minute',30:'minute',90:'hourly',180:'hourly',365:'hourly','Max':'hourly'}  //this is contrained by the free API so API may return less granular data
         setStatus('pending')
-        const abortCont =new AbortController()
-        fetch(`https://api.coingecko.com/api/v3/coins/${coinID}/market_chart?vs_currency=${baseMoneyURL}&days=${period}&interval=${periodToIntervalMap[period]}`,{signal:abortCont.signal})
-            .then(response => response.json())
+        fetch(`https://api.coingecko.com/api/v3/coins/${coinID}/market_chart?vs_currency=${baseMoneyURL}&days=${period}&interval=${periodToIntervalMap[period]}`)
+            .then(response => { 
+                if (!response.ok){
+                    const err = new Error('response was not ok')
+                    err.response=response
+                    throw err
+            } else 
+            return response.json()})
             .then(json => {
                 json.prices?.map((point)=>{point[0] = convertToDate(point[0])});
                 setRawPriceData(json)
                 setStatus('success')
             })
             .catch(err=>{
-                if(err==='AbortError'){
-                    console.log('fetch coin price aborted')
-                } else{
                     setStatus('error')
                     console.log('error when fetching coin price',err)
-                }
             })
-        return ()=>{
-            console.log('clean up fetch coin price')
-            abortCont.abort()
-        }
     }, [baseMoneyURL, coinID, period])
 
     const xArray =[], yArray=[]

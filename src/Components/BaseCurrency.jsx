@@ -4,7 +4,7 @@ export default function BaseCurrency({handleSelect}) {
     const {baseMoneyURL} =useParams()
     return (
         <>
-        <label>Base Currency:</label>
+        {/* <label>Base Currency:</label> */}
         <select  onChange={handleSelect} value={baseMoneyURL||'USD'} >
             <option value='USD'>USD</option>
             <option value='SGD'>SGD</option>
