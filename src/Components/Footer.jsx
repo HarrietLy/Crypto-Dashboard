@@ -1,8 +1,8 @@
 export default function Footer() {
     return (
         <>
-        Footer Here
+        Cryptocurrency Data Sourced From CoinGecko
+        <p>Developer: Harriet Ly, 2022</p>        
         </>
-
     )
 }

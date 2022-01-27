@@ -6,7 +6,7 @@ import { useParams } from "react-router";
 import { useSearchParams } from "react-router-dom";
 import loading from '../loading.svg'
 import NotFound from "../NotFound";
-import ReactPaginate from "react-paginate";
+// import ReactPaginate from "react-paginate";
 
 export default function DataTableWFilter() {
     const [searchParams, setSearchParams] = useSearchParams({})
@@ -60,11 +60,11 @@ export default function DataTableWFilter() {
         }
     }
 
-    const handlePageChangeLib=(e)=>{
-        console.log(e)
-        setPageNum(e.selected)
-        setSearchParams({ page: e.selected })
-    }
+    // const handlePageChangeLib=(e)=>{
+    //     console.log(e)
+    //     setPageNum(e.selected)
+    //     setSearchParams({ page: e.selected })
+    // }
 
     return (
         <>

@@ -1,10 +1,9 @@
-import { useState, useEffect } from 'react'
 import './App.css'
 import DataTableWFilter from './Components/DataTable/DataTableWFilter'
 import SearchBar from './Components/Search/SearchBar'
 import NavBar from './Components/NavBar'
 import Footer from './Components/Footer'
-import { Outlet, Route, Routes, useNavigate, useLocation, useSearchParams } from 'react-router-dom'
+import { Outlet, Route, Routes, useNavigate, useLocation } from 'react-router-dom'
 import About from "./Components/About"
 import Coin from './Components/Coin/Coin'
 import BaseCurrency from './Components/BaseCurrency'
@@ -37,8 +36,13 @@ function App() {
         <div className="search-bar">
           <SearchBar />
         </div>
-        <br />
-        <Outlet />
+        <br /><br />
+        <div style={{ position: 'absolute' }}>
+          <Outlet /><br/><br/>
+          <div className='footer' >
+          <Footer/>
+          </div>
+        </div>
       </>
     )
   }
@@ -55,7 +59,7 @@ function App() {
       </Routes>
 
       <br />
-      <Footer></Footer>
+
     </div>
   )
 }

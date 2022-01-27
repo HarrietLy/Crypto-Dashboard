@@ -10,7 +10,7 @@ export default function Sparkline({ sparkData, color,  baseMoney, coinID}) {
         <svg xmlns="http://www.w3.org/2000/svg" 
         width={width} height={height} 
         style={{cursor:'pointer'}}
-        onClick={()=>{navigate('/'+baseMoney+'/coins/'+coinID)}
+        onClick={()=>{navigate('/'+baseMoney+'/'+coinID)}
         }>
             <polyline points= {generatePolylinePoints(sparkData,width,height)}
                             stroke={color} fill='none'/>
