@@ -40,8 +40,8 @@ export default function SearchBar() {
         let matches = []
         if (searchQ.length > 0) {
             matches = rawData.filter((row) =>
-                (row.name.toLowerCase().indexOf(searchQ.toLowerCase()) > -1) ||
-                (row.symbol.toLowerCase().indexOf(searchQ.toLowerCase()) > -1))
+                (row.name.toLowerCase().includes(searchQ.toLowerCase())) ||
+                (row.symbol.toLowerCase().includes(searchQ.toLowerCase())))
             setTrendingIsShown(false)
         }
         setSearchQ(searchQ)
