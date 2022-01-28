@@ -1,5 +1,6 @@
 export default {
     'USD': '$',
+    'usd': '$',
     'SGD': 'S$',
     'EUR': '€',
     'GBP': '£',
