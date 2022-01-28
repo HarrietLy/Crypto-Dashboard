@@ -50,7 +50,7 @@ export default function Table({ rawData, filter }) {
                                                 <td key={i} width='80px' >{row[header].slice(0, 10)}</td>
                                                 : (header === 'current_price')
                                                     ?
-                                                    <td key={i} width='100px'>{baseMoneyMap[baseMoneyURL]} {
+                                                    <td key={i} width='100px'>{baseMoneyMap[baseMoneyURL||'USD']} {
                                                         (row[header] >= 1) ? row[header].toFixed(2) : row[header].toFixed(5)}</td>
                                                     : (header === 'market_cap' || header === 'circulating_supply' || header === 'total_volume')
                                                         ? <td key={i}>{row[header].toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>

@@ -71,7 +71,7 @@
 }
 
 /* for react paginate lib - not in use as it cannot work with search params */
-/* .paginationBttns a{
+.paginationBttns a{
   padding: 4px;
   margin: 8px;
   border-radius: 5px;
@@ -83,13 +83,13 @@
   color: white;
   background-color: #982c61;
   border: 1px solid #982c61
-} */
+}
 
-/* .paginationActive a{
+.paginationActive a{
   color: white;
   background-color: #982c61;
   border: 1px solid #982c61
-} */
+}
 
 
 

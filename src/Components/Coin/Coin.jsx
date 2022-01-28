@@ -42,12 +42,12 @@ export default function Coin() {
                         {rawCoinData.name} ({rawCoinData?.symbol?.toUpperCase()})
                         <span> #{rawCoinData?.market_cap_rank}</span>
                     </h2>
-                    <h3>{baseMoneyMap[baseMoneyURL]} {rawCoinData?.market_data?.current_price?.[baseMoneyURL.toLowerCase()].toLocaleString(undefined, { maximumFractionDigits:5 })}</h3>
+                    <h3>{baseMoneyMap[baseMoneyURL||'USD']} {rawCoinData?.market_data?.current_price?.[baseMoneyURL.toLowerCase()].toLocaleString(undefined, { maximumFractionDigits:5 })}</h3>
 
                     {rawCoinData?.description?.en.replace(/<(.*?)>/g, '')}
                     <br /><br />
 
-                    <div>Market cap: {baseMoneyMap[baseMoneyURL]} {rawCoinData?.market_data?.market_cap?.[baseMoneyURL.toLowerCase()].toLocaleString(undefined, { maximumFractionDigits: 0 })}</div>
+                    <div>Market cap: {baseMoneyMap[baseMoneyURL||'USD']} {rawCoinData?.market_data?.market_cap?.[baseMoneyURL.toLowerCase()].toLocaleString(undefined, { maximumFractionDigits: 0 })}</div>
                     <div>Homepage: {(rawCoinData?.links?.homepage.length > 0)
                         ? <a href={rawCoinData?.links?.homepage[0]}>{rawCoinData?.name}</a>
                         : 'not found'}
