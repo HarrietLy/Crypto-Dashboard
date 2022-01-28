@@ -34,7 +34,7 @@ export default function Coin() {
     }, [coinID])
 
     return (
-        <>
+        <div style={{width:'90vw'}}>
             {(status === 'pending') ? <img src={loading} width='100px' height='100px' />
             :(status === 'error') ? <NotFound/>
                 : <div>
@@ -42,6 +42,7 @@ export default function Coin() {
                         {rawCoinData.name} ({rawCoinData?.symbol?.toUpperCase()})
                         <span> #{rawCoinData?.market_cap_rank}</span>
                     </h2>
+                    
                     <h3>{baseMoneyMap[baseMoneyURL||'USD']} {rawCoinData?.market_data?.current_price?.[baseMoneyURL.toLowerCase()].toLocaleString(undefined, { maximumFractionDigits:5 })}</h3>
 
                     {rawCoinData?.description?.en.replace(/<(.*?)>/g, '')}
@@ -61,6 +62,6 @@ export default function Coin() {
             }
             <PriceChart />
 
-        </>
+        </div>
     )
 }
